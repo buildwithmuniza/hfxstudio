@@ -38,35 +38,118 @@ let changeText =()=>{
 changeText();
 setInterval(changeText,3000)
 
-// circle skill ///////////
-const circles = document.querySelectorAll('.circle');
-circles.forEach(elem=>{
-    var dots = elem.getAttribute("data-dots");
-    var marked = elem.getAttribute("data-percent");
-    var percent = Math.floor(dots*marked/100);
-    var points = "";
-    var rotate = 360 / dots;
 
+// =================================
+// SKILLS SECTION REPEAT ANIMATION
+// =================================
 
-    for(let i = 0 ; i < dots ; i++){
-        points += `<div class="points" style="--i:${i}; --rot:${rotate}deg"></div>`;
+const skillsSection = document.querySelector("#skills");
+
+const circles = document.querySelectorAll(".circle");
+
+// Create professional skill dots only once
+circles.forEach(elem => {
+
+    const dots = Number(elem.getAttribute("data-dots"));
+
+    const rotate = 360 / dots;
+
+    let points = "";
+
+    for (let i = 0; i < dots; i++) {
+
+        points += `<div class="points"
+            style="--i:${i}; --rot:${rotate}deg">
+        </div>`;
+
     }
-   elem.innerHTML = points;
 
-   const pointsMarked = elem.querySelectorAll('.points');
-   for(let i = 0; i<percent ; i++){
-    pointsMarked[i].classList.add('marked');
-   }
-})
- //Mixitup Potfolio////////
-var mixer = mixitup('.portfolio-gallery', {
-    selectors: {
-        target: '.port-box'
-    },
-    animation: {
-        duration: 400
-    }
+    elem.innerHTML = points;
+
 });
+
+function resetSkillsAnimation() {
+
+    if (!skillsSection) return;
+
+    // Remove animation class
+    skillsSection.classList.remove("animate-skills");
+
+    // Reset circular skill dots
+    circles.forEach(elem => {
+
+        const points = elem.querySelectorAll(".points");
+
+        points.forEach(point => {
+            point.classList.remove("marked");
+        });
+
+    });
+
+}
+
+function startSkillsAnimation() {
+
+    if (!skillsSection) return;
+
+    resetSkillsAnimation();
+
+    // Force browser to restart CSS animations
+    void skillsSection.offsetWidth;
+
+    // Start technical bars
+    skillsSection.classList.add("animate-skills");
+
+    // Start professional circles
+    circles.forEach(elem => {
+
+        const dots = Number(elem.getAttribute("data-dots"));
+
+        const marked = Number(elem.getAttribute("data-percent"));
+
+        const percent = Math.floor(dots * marked / 100);
+
+        const points = elem.querySelectorAll(".points");
+
+        points.forEach((point, index) => {
+
+            if (index < percent) {
+                point.classList.add("marked");
+            }
+
+        });
+
+    });
+
+}
+
+// Detect when Skills section enters/leaves viewport
+
+const skillsObserver = new IntersectionObserver(entries => {
+
+    entries.forEach(entry => {
+
+        if (entry.isIntersecting) {
+
+            startSkillsAnimation();
+
+        } else {
+
+            resetSkillsAnimation();
+
+        }
+
+    });
+
+}, {
+    threshold: 0.25
+});
+
+if (skillsSection) {
+    skillsObserver.observe(skillsSection);
+}
+
+  
 // active menu /////////////
 let menuLi = document.querySelectorAll('header ul li a');
 let section = document.querySelectorAll('section');
@@ -152,119 +235,87 @@ function toggleService(event, button) {
     : "Read Less!";
 }
 
-// ================= LOADING SCREEN =================
+
+// =================================
+// LOADING SCREEN CONTROLLER
+// =================================
 
 window.addEventListener("load", () => {
 
     const loadingScreen = document.getElementById("loadingScreen");
 
-    if (!loadingScreen) return;
+    if (!loadingScreen) {
+        document.body.classList.add("website-ready");
+        return;
+    }
 
+    // Allow loader animation to complete
     setTimeout(() => {
 
-        // Start loader fade-out
         loadingScreen.classList.add("hide-loader");
 
-        // Reveal website after loader disappears
+        // Remove loader after fade-out
         setTimeout(() => {
 
             loadingScreen.style.display = "none";
+
             document.body.classList.add("website-ready");
 
-        }, 1200);
+        }, 850);
 
-    }, 3000);
+    }, 2300);
 
 });
 
-// ================= PORTFOLIO POPUP =================
 
-const portfolioPopup = document.getElementById("portfolioPopup");
-const popupMedia = document.getElementById("popupMedia");
-const popupClose = document.getElementById("popupClose");
+// =================================
+// RESTORE LAST OPENED SECTION
+// =================================
 
-const portfolioGallery = document.querySelector(".portfolio-gallery");
-
-// Open popup when clicking an image or video project link
-portfolioGallery.addEventListener("click", function (event) {
-
-    const link = event.target.closest(".port-content a");
-
-    if (!link) return;
-
-    const fileURL = link.href;
-    const filePath = new URL(fileURL).pathname.toLowerCase();
-
-    const isVideo = /\.(mp4|webm|ogg)$/.test(filePath);
-    const isImage = /\.(jpg|jpeg|png|gif|webp)$/.test(filePath);
-
-    // Website links and other links will work normally
-    if (!isVideo && !isImage) return;
-
-    event.preventDefault();
-
-    popupMedia.innerHTML = "";
-
-    if (isVideo) {
-        const video = document.createElement("video");
-
-        video.src = fileURL;
-        video.controls = true;
-        video.autoplay = true;
-        video.playsInline = true;
-
-        popupMedia.appendChild(video);
-    }
-
-    if (isImage) {
-        const image = document.createElement("img");
-
-        image.src = fileURL;
-        image.alt = "Portfolio Project";
-
-        popupMedia.appendChild(image);
-    }
-
-    portfolioPopup.classList.add("active");
-});
-
-// Close popup function
-function closePortfolioPopup() {
-    portfolioPopup.classList.remove("active");
-
-    const video = popupMedia.querySelector("video");
-
-    if (video) {
-        video.pause();
-        video.removeAttribute("src");
-        video.load();
-    }
-
-    popupMedia.innerHTML = "";
+// Keep browser scroll restoration enabled
+if ("scrollRestoration" in history) {
+    history.scrollRestoration = "auto";
 }
 
-// Close button
-popupClose.addEventListener("click", closePortfolioPopup);
+// Restore section after loader disappears
+window.addEventListener("load", () => {
 
-// Close when clicking outside popup content
-portfolioPopup.addEventListener("click", function (event) {
-    if (event.target === portfolioPopup) {
-        closePortfolioPopup();
-    }
-});
+    const loadingScreen = document.getElementById("loadingScreen");
 
-// Close with Escape key
-document.addEventListener("keydown", function (event) {
-    if (event.key === "Escape") {
-        closePortfolioPopup();
-    }
-});
+    const restorePosition = () => {
 
-const navLinks = document.querySelectorAll('.navlist a');
+        if (window.location.hash) {
 
-navLinks.forEach(link => {
-  link.addEventListener('click', () => {
-    navLinks.forEach(item => item.classList.remove('active'));
-    link.classList.add('active');
-  });
+            const target = document.querySelector(
+                window.location.hash
+            );
+
+            if (target) {
+
+                target.scrollIntoView({
+                    behavior: "auto",
+                    block: "start"
+                });
+
+            }
+
+        }
+
+    };
+
+    const waitForLoader = () => {
+
+        if (
+            !loadingScreen ||
+            loadingScreen.style.display === "none"
+        ) {
+            restorePosition();
+        } else {
+            setTimeout(waitForLoader, 100);
+        }
+
+    };
+
+    waitForLoader();
+
 });
