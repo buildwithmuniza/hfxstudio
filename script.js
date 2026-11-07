@@ -235,87 +235,36 @@ function toggleService(event, button) {
     : "Read Less!";
 }
 
-
 // =================================
-// LOADING SCREEN CONTROLLER
+// FIXED LOADING SCREEN
 // =================================
 
-window.addEventListener("load", () => {
-
+function finishLoading() {
     const loadingScreen = document.getElementById("loadingScreen");
 
-    if (!loadingScreen) {
-        document.body.classList.add("website-ready");
+    if (!loadingScreen || loadingScreen.dataset.finished === "true") {
         return;
     }
 
-    // Allow loader animation to complete
+    loadingScreen.dataset.finished = "true";
+    loadingScreen.classList.add("hide-loader");
+
     setTimeout(() => {
-
-        loadingScreen.classList.add("hide-loader");
-
-        // Remove loader after fade-out
-        setTimeout(() => {
-
-            loadingScreen.style.display = "none";
-
-            document.body.classList.add("website-ready");
-
-        }, 850);
-
-    }, 2300);
-
-});
-
-
-// =================================
-// RESTORE LAST OPENED SECTION
-// =================================
-
-// Keep browser scroll restoration enabled
-if ("scrollRestoration" in history) {
-    history.scrollRestoration = "auto";
+        loadingScreen.style.display = "none";
+        document.body.classList.add("website-ready");
+    }, 850);
 }
 
-// Restore section after loader disappears
-window.addEventListener("load", () => {
+function startLoading() {
+    // Normal loader duration
+    setTimeout(finishLoading, 2300);
 
-    const loadingScreen = document.getElementById("loadingScreen");
+    // Safety fallback: never keep loader indefinitely
+    setTimeout(finishLoading, 5000);
+}
 
-    const restorePosition = () => {
-
-        if (window.location.hash) {
-
-            const target = document.querySelector(
-                window.location.hash
-            );
-
-            if (target) {
-
-                target.scrollIntoView({
-                    behavior: "auto",
-                    block: "start"
-                });
-
-            }
-
-        }
-
-    };
-
-    const waitForLoader = () => {
-
-        if (
-            !loadingScreen ||
-            loadingScreen.style.display === "none"
-        ) {
-            restorePosition();
-        } else {
-            setTimeout(waitForLoader, 100);
-        }
-
-    };
-
-    waitForLoader();
-
-});
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", startLoading);
+} else {
+    startLoading();
+}

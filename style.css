@@ -2014,3 +2014,19 @@ body {
     }
 
 }
+
+.loading-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 999999;
+    transition: transform 0.85s ease,
+                opacity 0.85s ease,
+                visibility 0.85s ease;
+}
+
+.loading-screen.hide-loader {
+    transform: translateY(-100%);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
