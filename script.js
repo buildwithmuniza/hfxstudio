@@ -38,109 +38,73 @@ let changeText =()=>{
 changeText();
 setInterval(changeText,3000)
 
-
 // =================================
 // SKILLS SECTION REPEAT ANIMATION
 // =================================
 
 const skillsSection = document.querySelector("#skills");
-
 const circles = document.querySelectorAll(".circle");
 
-// Create professional skill dots only once
+// Create circle dots only once
 circles.forEach(elem => {
+    if (elem.querySelector(".points")) return;
 
     const dots = Number(elem.getAttribute("data-dots"));
-
     const rotate = 360 / dots;
 
     let points = "";
 
     for (let i = 0; i < dots; i++) {
-
         points += `<div class="points"
-            style="--i:${i}; --rot:${rotate}deg">
-        </div>`;
-
+            style="--i:${i}; --rot:${rotate}deg"></div>`;
     }
 
     elem.innerHTML = points;
-
 });
 
 function resetSkillsAnimation() {
-
     if (!skillsSection) return;
 
-    // Remove animation class
     skillsSection.classList.remove("animate-skills");
 
-    // Reset circular skill dots
     circles.forEach(elem => {
-
-        const points = elem.querySelectorAll(".points");
-
-        points.forEach(point => {
+        elem.querySelectorAll(".points").forEach(point => {
             point.classList.remove("marked");
         });
-
     });
-
 }
 
 function startSkillsAnimation() {
-
     if (!skillsSection) return;
 
     resetSkillsAnimation();
 
-    // Force browser to restart CSS animations
+    // Restart CSS animation
     void skillsSection.offsetWidth;
 
-    // Start technical bars
     skillsSection.classList.add("animate-skills");
 
-    // Start professional circles
     circles.forEach(elem => {
+        const dots = Number(elem.dataset.dots);
+        const percent = Number(elem.dataset.percent);
+        const marked = Math.floor(dots * percent / 100);
 
-        const dots = Number(elem.getAttribute("data-dots"));
-
-        const marked = Number(elem.getAttribute("data-percent"));
-
-        const percent = Math.floor(dots * marked / 100);
-
-        const points = elem.querySelectorAll(".points");
-
-        points.forEach((point, index) => {
-
-            if (index < percent) {
+        elem.querySelectorAll(".points").forEach((point, index) => {
+            if (index < marked) {
                 point.classList.add("marked");
             }
-
         });
-
     });
-
 }
 
-// Detect when Skills section enters/leaves viewport
-
 const skillsObserver = new IntersectionObserver(entries => {
-
     entries.forEach(entry => {
-
         if (entry.isIntersecting) {
-
             startSkillsAnimation();
-
         } else {
-
             resetSkillsAnimation();
-
         }
-
     });
-
 }, {
     threshold: 0.25
 });
@@ -148,7 +112,6 @@ const skillsObserver = new IntersectionObserver(entries => {
 if (skillsSection) {
     skillsObserver.observe(skillsSection);
 }
-
   
 // active menu /////////////
 let menuLi = document.querySelectorAll('header ul li a');
@@ -268,3 +231,77 @@ if (document.readyState === "loading") {
 } else {
     startLoading();
 }
+
+
+/* ===== PORTFOLIO IMAGE & VIDEO POPUP ===== */
+
+(() => {
+  const popup = document.getElementById("portfolioPopup");
+  const popupMedia = document.getElementById("popupMedia");
+  const closeBtn = document.getElementById("popupClose");
+
+  if (!popup || !popupMedia || !closeBtn) return;
+
+  function closePortfolioPopup() {
+    const video = popupMedia.querySelector("video");
+
+    if (video) {
+      video.pause();
+      video.removeAttribute("src");
+      video.load();
+    }
+
+    popup.classList.remove("active");
+    popupMedia.replaceChildren();
+    document.body.style.overflow = "";
+  }
+
+  document.querySelector("#portfolio").addEventListener("click", function(e) {
+    const link = e.target.closest(".port-content a");
+
+    if (!link) return;
+
+    const href = link.getAttribute("href");
+    if (!href) return;
+
+    const extension = href.split("?")[0].split(".").pop().toLowerCase();
+
+    const isVideo = ["mp4", "webm", "ogg"].includes(extension);
+    const isImage = ["jpg", "jpeg", "png", "gif", "webp"].includes(extension);
+
+    // Website links ko normal new tab mein open hone do
+    if (!isVideo && !isImage) return;
+
+    e.preventDefault();
+
+    const media = document.createElement(isVideo ? "video" : "img");
+
+    media.src = href;
+
+    if (isVideo) {
+      media.controls = true;
+      media.playsInline = true;
+      media.preload = "metadata";
+    } else {
+      media.alt = "Portfolio project preview";
+    }
+
+    popupMedia.replaceChildren(media);
+    popup.classList.add("active");
+    document.body.style.overflow = "hidden";
+  });
+
+  closeBtn.addEventListener("click", closePortfolioPopup);
+
+  popup.addEventListener("click", function(e) {
+    if (e.target === popup) {
+      closePortfolioPopup();
+    }
+  });
+
+  document.addEventListener("keydown", function(e) {
+    if (e.key === "Escape" && popup.classList.contains("active")) {
+      closePortfolioPopup();
+    }
+  });
+})();

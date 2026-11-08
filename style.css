@@ -2183,3 +2183,483 @@ body {
         font-size: 12px;
     }
 }
+
+
+/* ===== RESPONSIVE SKILLS BAR ANIMATION ===== */
+
+#skills .skill-bar .bar {
+  width: 100%;
+  height: 10px;
+  overflow: hidden;
+  position: relative;
+}
+
+#skills .skill-bar .bar span {
+  display: block;
+  width: 0;
+  max-width: 100%;
+  height: 100%;
+  border-radius: 25px;
+  animation: none !important;
+}
+
+#skills.animate-skills .skill-bar .bar .html {
+  animation: html 2s ease forwards !important;
+}
+
+#skills.animate-skills .skill-bar .bar .adobe-premier-pro {
+  animation: adobe-premier-pro 3s ease forwards !important;
+}
+
+#skills.animate-skills .skill-bar .bar .javascript {
+  animation: javascript 4s ease forwards !important;
+}
+
+#skills.animate-skills .skill-bar .bar .css {
+  animation: css 5s ease forwards !important;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  #skills .skill-main {
+    grid-template-columns: 1fr;
+    grid-row-gap: 25px;
+  }
+
+  #skills .skill-bar {
+    width: 100%;
+  }
+}
+
+/* Laptop and larger screens */
+@media (min-width: 769px) {
+  #skills .skill-main {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 50px;
+  }
+}
+
+
+/* ===== PORTFOLIO SMOOTH + RESPONSIVE FIX ===== */
+
+#portfolio .portfolio-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 24px;
+}
+
+#portfolio .port-box {
+  position: relative;
+  min-width: 0;
+  min-height: 260px;
+  overflow: hidden;
+  border-radius: 15px;
+  opacity: 0;
+  animation: portfolioCardIn .7s ease forwards;
+  transition: transform .35s ease, box-shadow .35s ease;
+}
+
+#portfolio .port-box:nth-child(2) { animation-delay: .08s; }
+#portfolio .port-box:nth-child(3) { animation-delay: .16s; }
+#portfolio .port-box:nth-child(4) { animation-delay: .24s; }
+#portfolio .port-box:nth-child(5) { animation-delay: .32s; }
+#portfolio .port-box:nth-child(6) { animation-delay: .40s; }
+
+@keyframes portfolioCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#portfolio .port-image {
+  width: 100%;
+  height: 270px;
+  overflow: hidden;
+}
+
+#portfolio .port-image img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform .5s ease;
+}
+
+#portfolio .port-box:hover .port-image img {
+  transform: scale(1.06);
+}
+
+#portfolio .port-content {
+  transition: opacity .35s ease;
+}
+
+/* Popup smooth animation */
+#portfolioPopup {
+  position: fixed;
+  inset: 0;
+  z-index: 999999;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, .88);
+  backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .35s ease, visibility .35s ease;
+}
+
+#portfolioPopup.active {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+}
+
+#portfolioPopup .popup-content {
+  width: min(900px, 100%);
+  max-height: 90vh;
+  overflow: auto;
+  padding: 15px;
+  background: #171717;
+  border: 2px solid var(--hover-color);
+  border-radius: 15px;
+  box-shadow: var(--neon-box-shadow);
+  transform: scale(.92) translateY(15px);
+  transition: transform .35s ease;
+}
+
+#portfolioPopup.active .popup-content {
+  transform: scale(1) translateY(0);
+}
+
+#popupMedia {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#popupMedia img,
+#popupMedia video {
+  display: block;
+  max-width: 100%;
+  max-height: 75vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 10px;
+}
+
+#popupMedia video {
+  width: 100%;
+}
+
+#portfolioPopup .popup-close {
+  top: -12px;
+  right: -12px;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  #portfolio .portfolio-gallery {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  #portfolio .portfolio-gallery {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  #portfolio .port-image {
+    height: 240px;
+  }
+
+  #portfolio .port-content {
+    opacity: 1;
+    background: linear-gradient(
+      transparent,
+      rgba(0, 0, 0, .85)
+    );
+    justify-content: flex-end;
+    padding: 20px;
+  }
+
+  #portfolioPopup {
+    padding: 12px;
+  }
+
+  #portfolioPopup .popup-content {
+    width: 100%;
+    padding: 10px;
+  }
+
+  #popupMedia img,
+  #popupMedia video {
+    max-height: 70vh;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #portfolio .port-box {
+    animation: none;
+    opacity: 1;
+  }
+
+  #portfolioPopup,
+  #portfolioPopup .popup-content {
+    transition: none;
+  }
+}
+
+
+/* ===== POPUP CLOSE BUTTON FIX ===== */
+
+#portfolioPopup .popup-content {
+  position: relative;
+  overflow: visible;
+  padding-top: 45px;
+}
+
+#portfolioPopup .popup-close {
+  position: absolute !important;
+  top: 10px !important;
+  right: 10px !important;
+
+  width: 38px !important;
+  height: 38px !important;
+  min-width: 38px;
+
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+
+  padding: 0 !important;
+  margin: 0;
+
+  border: 2px solid var(--hover-color) !important;
+  border-radius: 50% !important;
+
+  background: #171717 !important;
+  color: var(--hover-color) !important;
+
+  font-size: 28px !important;
+  line-height: 1 !important;
+  cursor: pointer;
+
+  z-index: 1000000;
+  box-shadow: 0 0 12px rgba(18, 247, 255, .4);
+  transition: .3s ease;
+}
+
+#portfolioPopup .popup-close:hover {
+  background: var(--hover-color) !important;
+  color: #171717 !important;
+  transform: rotate(90deg);
+}
+
+@media (max-width: 600px) {
+  #portfolioPopup .popup-content {
+    padding: 48px 10px 10px;
+  }
+
+  #portfolioPopup .popup-close {
+    top: 8px !important;
+    right: 8px !important;
+    width: 36px !important;
+    height: 36px !important;
+  }
+}
+/* ABOUT SECTION - BLOB TEXT ALIGNMENT FIX (DESKTOP + MOBILE) */
+
+.info-about1,
+.info-about2,
+.info-about3 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    box-sizing: border-box;
+    text-align: center;
+
+    width: 90px;
+    height: 90px;
+    padding: 8px;
+
+    font-size: 11px;
+    line-height: 1.2;
+
+    overflow: hidden;
+}
+
+.info-about1 span,
+.info-about2 span,
+.info-about3 span {
+    display: block;
+    margin: 0 0 3px;
+    font-size: 14px;
+    line-height: 1.2;
+    font-weight: 700;
+}
+
+.info-about1 p,
+.info-about2 p,
+.info-about3 p {
+    margin: 0;
+    padding: 0;
+    font-size: inherit;
+    line-height: 1.2;
+    text-align: center;
+    overflow-wrap: break-word;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+    .info-about1,
+    .info-about2,
+    .info-about3 {
+        width: 76px;
+        height: 76px;
+        padding: 6px;
+        font-size: 10px;
+    }
+
+    .info-about1 span,
+    .info-about2 span,
+    .info-about3 span {
+        font-size: 13px;
+    }
+}
+
+/* Small Mobile */
+@media (max-width: 420px) {
+    .info-about1,
+    .info-about2,
+    .info-about3 {
+        width: 68px;
+        height: 68px;
+        padding: 5px;
+        font-size: 9px;
+    }
+
+    .info-about1 span,
+    .info-about2 span,
+    .info-about3 span {
+        font-size: 12px;
+    }
+}
+
+/* BLOB TEXT ALIGNMENT ONLY - KEEP ORIGINAL POSITIONS */
+
+.info-about1,
+.info-about2,
+.info-about3 {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    box-sizing: border-box;
+    line-height: 1.2;
+}
+
+.info-about1 span,
+.info-about2 span,
+.info-about3 span {
+    display: block;
+    margin: 0 0 3px;
+    line-height: 1.2;
+}
+
+.info-about1 p,
+.info-about2 p,
+.info-about3 p {
+    margin: 0;
+    padding: 0;
+    text-align: center;
+    line-height: 1.2;
+}
+
+/* Move About Info Blobs Closer to Image Border */
+
+/* Desktop */
+@media (min-width: 769px) {
+    .info-about1 {
+        left: 6%;
+    }
+
+    .info-about2 {
+        left: 50%;
+    }
+
+    .info-about3 {
+        left: 45%;
+    }
+}
+
+/* Mobile and Tablet */
+@media (max-width: 768px) {
+    .info-about1 {
+        left: 8%;
+    }
+
+    .info-about2 {
+        right: 8%;
+    }
+
+    .info-about3 {
+        right: 10%;
+    }
+}
+
+/* About Blob Position - Closer to Image */
+@media (min-width: 769px) {
+    .info-about1 {
+        left: 20%;
+    }
+
+    .info-about2 {
+        left: 45%;
+    }
+}
+
+@media (max-width: 768px) {
+    .info-about1 {
+        left: 14%;
+    }
+
+    .info-about2 {
+        right: 10%;
+    }
+}
+/* FINAL ABOUT BLOBS POSITION - DESKTOP ONLY */
+
+@media (min-width: 769px) {
+
+    .info-about1 {
+        left: 10%;
+        top: 34%;
+    }
+
+    .info-about2 {
+        left: 70%;
+        top: 15%;
+        right: auto;
+    }
+
+    .info-about3 {
+        left: 65%;
+        top: 70%;
+        right: auto;
+    }
+
+}
